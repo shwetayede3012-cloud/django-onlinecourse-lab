@@ -70,4 +70,24 @@ class Submission(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.score}/{self.total_questions}"
+    
+class Instructor(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return self.user.username
+
+
+class Learner(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return self.user.username
+
 

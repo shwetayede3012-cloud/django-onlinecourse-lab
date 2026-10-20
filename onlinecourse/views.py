@@ -1,11 +1,11 @@
 
-
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Course, Question, Choice, Submission
 
 
 def course_details(request, course_id=1):
     course = get_object_or_404(Course, id=course_id)
+
     return render(
         request,
         "onlinecourse/course_details_bootstrap.html",
@@ -15,6 +15,7 @@ def course_details(request, course_id=1):
 
 def exam(request):
     questions = Question.objects.prefetch_related("choices").all()
+
     return render(
         request,
         "onlinecourse/exam.html",
@@ -37,6 +38,7 @@ def submit(request):
 
         if choice_id:
             choice = question.choices.filter(id=choice_id).first()
+
             if choice:
                 selected_choices.append(choice)
 
@@ -49,6 +51,7 @@ def submit(request):
         score=score,
         total_questions=questions.count()
     )
+
     submission.selected_choices.set(selected_choices)
 
     return render(
@@ -58,13 +61,15 @@ def submit(request):
     )
 
 
-def show_exam_result(request):
+def show_exam_result(request, course_id, submission_id):
     if not request.user.is_authenticated:
         return redirect("/admin/login/")
 
-    submission = Submission.objects.filter(
+    submission = get_object_or_404(
+        Submission,
+        id=submission_id,
         user=request.user
-    ).order_by("-submitted_at").first()
+    )
 
     return render(
         request,
