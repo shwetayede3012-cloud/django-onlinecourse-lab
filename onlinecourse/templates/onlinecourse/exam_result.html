@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,27 +10,52 @@
           rel="stylesheet">
 </head>
 <body class="bg-light">
-    <div class="container py-5">
-        <div class="card shadow mx-auto" style="max-width: 700px;">
-            <div class="card-body text-center p-5">
-                {% if submission %}
-                    <h1 class="text-success">Congratulations!</h1>
-                    <h2>Your Exam Results</h2>
-                    <p class="fs-4">
-                        Score: {{ submission.score }} /
-                        {{ submission.total_questions }}
-                    </p>
-                    <p>Thank you for completing the exam.</p>
-                {% else %}
-                    <h1>Exam Results</h1>
-                    <p>Please log in and submit your exam to see your score.</p>
-                {% endif %}
+<div class="container py-5">
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <h1 class="text-success">Congratulations!</h1>
+            <h2>Your Exam Results</h2>
 
-                <a href="/course/" class="btn btn-primary mt-3">
-                    Back to Course
-                </a>
+            <div class="alert alert-info mt-3">
+                <strong>Your Score:</strong>
+                {{ submission.score }} / {{ submission.total_questions }}
             </div>
+
+            <h3 class="mt-4">Question-by-Question Results</h3>
+
+            {% for question in questions %}
+            <div class="border rounded bg-white p-3 mt-3">
+                <h5>{{ forloop.counter }}. {{ question.text }}</h5>
+
+                <p>
+                    <strong>Your Answer:</strong>
+                    {% for choice in submission.selected_choices.all %}
+                        {% if choice.question_id == question.id %}
+                            {{ choice.text }}
+                        {% endif %}
+                    {% empty %}
+                        Not answered
+                    {% endfor %}
+                </p>
+
+                <p class="text-success mb-0">
+                    <strong>Correct Answer:</strong>
+                    {% for choice in question.choices.all %}
+                        {% if choice.is_correct %}
+                            {{ choice.text }}
+                        {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+            {% empty %}
+            <p>No questions are available to display.</p>
+            {% endfor %}
+
+            <a href="/course/" class="btn btn-primary mt-4">
+                Back to Course
+            </a>
         </div>
     </div>
+</div>
 </body>
 </html>
